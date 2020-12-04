@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup
 import re
 import time
@@ -7,14 +8,20 @@ from prettytable import ALL
 
 driver = webdriver.Chrome("/usr/local/bin/chromedriver")
 
-driver.get("https://dominating12.com/game/1096090")
+driver.get("https://dominating12.com/game/1097030")
 time.sleep(1)
 gameLogTab = driver.find_element_by_id('game-log-tab-link')
 driver.execute_script("arguments[0].click();", gameLogTab)
 time.sleep(1)
-loadButton = driver.find_element_by_id('load-log')
-driver.execute_script("arguments[0].click();", loadButton)
-time.sleep(2)
+
+# Load more button not always there. Depends on length of game
+try:
+    loadButton = driver.find_element_by_id('load-log')
+    driver.execute_script("arguments[0].click();", loadButton)
+    time.sleep(2)
+except NoSuchElementException: 
+    print "Load more button not present"
+
 content = driver.page_source
 soup = BeautifulSoup(content, "html.parser")
 
@@ -58,8 +65,12 @@ for name in attack:
     currDefend = defend[name]
     totalKilled = currAttack[0] + currDefend[0]
     totalLost = currAttack[1] + currDefend[1]
-    t.add_row([name, totalKilled, totalLost, "{:.1F}".format(float(totalKilled)/float(totalLost)),
-        currAttack[0], currAttack[1], "{:.1F}".format(float(currAttack[0])/float(currAttack[1])),
-        currDefend[0], currDefend[1], "{:.1F}".format(float(currDefend[0])/float(currDefend[1])) ])
+    kd = 0 if totalKilled == 0 else float("inf") if totalLost == 0.0 else float(totalKilled)/float(totalLost)
+    attackKd = 0 if currAttack[0] == 0 else float("inf") if currAttack[1] == 0.0 else float(currAttack[0])/float(currAttack[1])
+    defendKd = 0 if currDefend[0] == 0 else float("inf") if currDefend[1] == 0.0 else float(currDefend[0])/float(currDefend[1])
+
+    t.add_row([name, totalKilled, totalLost, "{:.1F}".format(kd),
+        currAttack[0], currAttack[1], "{:.1F}".format(attackKd),
+        currDefend[0], currDefend[1], "{:.1F}".format(defendKd) ])
 
 print(t)
