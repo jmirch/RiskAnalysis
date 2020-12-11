@@ -35,13 +35,35 @@ for div in soup.findAll('div', attrs={'class':'chat-message-body'}):
         names = re.findall('\(([a-zA-Z0-9]*)\)', div.text)
         killed = int(re.findall('killing\s(\d{1,2})', div.text)[0])
         lost = int(re.findall('losing\s(\d{1,2})', div.text)[0])
-        first = str(names[0])
-        second = str(names[1])
-        
+
+        # Handle capturing names
+        # In some maps, names might be in the format of CountryShortName (CountryLongName) (PlayerName)
+        # Elif and Else capture edge cases
+        first, second = "", ""
+        if len(names) == 2:
+            first = str(names[0])
+            second = str(names[1])
+        elif len(names) == 4:
+            first = str(names[1])
+            second = str(names[3])
+        else:
+            second = names[2]
+            if names[0] in attack:
+                first = names[0]
+            elif names[1] in attack:
+                first = names[1]
+            else: 
+                print "Could not identify name of attacker"
+                first = "Unknown"
+
         # Initialize players in map if they havent been
         # Tuples are defined as (killed, lost)
         if first not in attack:
             attack[first] = [0, 0]
+        if first not in defend:
+            defend[first] = [0, 0]
+        if second not in attack:
+            attack[second] = [0, 0]
         if second not in defend:
             defend[second] = [0, 0]
 
@@ -69,8 +91,8 @@ for name in attack:
     attackKd = 0 if currAttack[0] == 0 else float("inf") if currAttack[1] == 0.0 else float(currAttack[0])/float(currAttack[1])
     defendKd = 0 if currDefend[0] == 0 else float("inf") if currDefend[1] == 0.0 else float(currDefend[0])/float(currDefend[1])
 
-    t.add_row([name, totalKilled, totalLost, "{:.1F}".format(kd),
-        currAttack[0], currAttack[1], "{:.1F}".format(attackKd),
-        currDefend[0], currDefend[1], "{:.1F}".format(defendKd) ])
+    t.add_row([name, totalKilled, totalLost, "{:.2F}".format(kd),
+        currAttack[0], currAttack[1], "{:.2F}".format(attackKd),
+        currDefend[0], currDefend[1], "{:.2F}".format(defendKd) ])
 
 print(t)
