@@ -6,9 +6,11 @@ import time
 from prettytable import PrettyTable
 from prettytable import ALL
 
+gameNumber = raw_input("Game number: ")
+
 driver = webdriver.Chrome("/usr/local/bin/chromedriver")
 
-driver.get("https://dominating12.com/game/1097030")
+driver.get("https://dominating12.com/game/" + gameNumber)
 time.sleep(1)
 gameLogTab = driver.find_element_by_id('game-log-tab-link')
 driver.execute_script("arguments[0].click();", gameLogTab)
@@ -95,4 +97,5 @@ for name in attack:
         currAttack[0], currAttack[1], "{:.2F}".format(attackKd),
         currDefend[0], currDefend[1], "{:.2F}".format(defendKd) ])
 
+print "\n"
 print(t)
