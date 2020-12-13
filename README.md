@@ -3,6 +3,7 @@ A python script which analyzes Risk game results from Dominating12
 
 ## Setup:
 Run the following scripts to download the necessary libraries:
+
 pip install selenium
 
 python -m pip install -U prettytable
