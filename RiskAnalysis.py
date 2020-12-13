@@ -20,7 +20,7 @@ time.sleep(1)
 try:
     loadButton = driver.find_element_by_id('load-log')
     driver.execute_script("arguments[0].click();", loadButton)
-    time.sleep(2)
+    time.sleep(5)
 except NoSuchElementException: 
     print "Load more button not present"
 
