@@ -5,8 +5,9 @@ import re
 import time
 from prettytable import PrettyTable
 from prettytable import ALL
+from builtins import input
 
-gameNumber = raw_input("Game number: ")
+gameNumber = input("Game number: ")
 
 driver = webdriver.Chrome("/usr/local/bin/chromedriver")
 
@@ -22,7 +23,7 @@ try:
     driver.execute_script("arguments[0].click();", loadButton)
     time.sleep(5)
 except NoSuchElementException: 
-    print "Load more button not present"
+    print("Load more button not present")
 
 content = driver.page_source
 soup = BeautifulSoup(content, "html.parser")
@@ -55,7 +56,7 @@ for div in soup.findAll('div', attrs={'class':'chat-message-body'}):
             elif names[1] in attack:
                 first = names[1]
             else: 
-                print "Could not identify name of attacker"
+                print("Could not identify name of attacker")
                 first = "Unknown"
 
         # Initialize players in map if they havent been
@@ -97,5 +98,5 @@ for name in attack:
         currAttack[0], currAttack[1], "{:.2F}".format(attackKd),
         currDefend[0], currDefend[1], "{:.2F}".format(defendKd) ])
 
-print "\n"
+print("\n")
 print(t)
